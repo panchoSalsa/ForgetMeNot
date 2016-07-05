@@ -39,6 +39,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -51,6 +52,9 @@ public class MainActivity extends Activity {
     private final int ADD_TASK_REQUEST = 1;
 
     private BroadcastReceiver mTickReceiver;
+
+    private final String PREFS_TASKS = "prefs_tasks";
+    private final String KEY_TASKS_LIST = "list";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +72,15 @@ public class MainActivity extends Activity {
         mDateTimeTextView = (TextView) findViewById(R.id.dateTimeTextView);
         final Button addTaskBtn = (Button) findViewById(R.id.addTaskBtn);
         final ListView listview = (ListView) findViewById(R.id.taskListview);
-        mList = new ArrayList<String>();
+
+
+        String savedList = getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).getString(KEY_TASKS_LIST, null);
+        if (savedList != null) {
+            String[] items = savedList.split(",");
+            mList = new ArrayList<String>(Arrays.asList(items));
+        } else {
+            mList = new ArrayList<String>();
+        }
 
         // 5
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mList);
@@ -114,6 +126,20 @@ public class MainActivity extends Activity {
                 Log.e(TAG, "Timetick Receiver not registered", e);
             }
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // Save all data which you want to persist.
+        StringBuilder savedList = new StringBuilder();
+        for (String s : mList) {
+            savedList.append(s);
+            savedList.append(",");
+        }
+        getSharedPreferences(PREFS_TASKS, MODE_PRIVATE).edit()
+                .putString(KEY_TASKS_LIST, savedList.toString()).commit();
     }
 
 
