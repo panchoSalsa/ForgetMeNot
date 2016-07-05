@@ -1,5 +1,6 @@
 package com.raywenderlich.todolist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,6 +21,20 @@ public class TaskDescriptionActivity extends AppCompatActivity {
     }
 
     public void doneClicked(View view) {
+        // 1
+        String taskDescription = mDescriptionView.getText().toString();
+
+        if (!taskDescription.isEmpty()) {
+            // 2
+            Intent result = new Intent();
+            result.putExtra(EXTRA_TASK_DESCRIPTION, taskDescription);
+            setResult(RESULT_OK, result);
+        } else {
+            // 3
+            setResult(RESULT_CANCELED);
+        }
+        // 4
+        finish();
 
     }
 
