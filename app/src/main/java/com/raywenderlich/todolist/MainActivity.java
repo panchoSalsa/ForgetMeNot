@@ -25,6 +25,7 @@ package com.raywenderlich.todolist;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.app.AlertDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,6 +92,7 @@ public class MainActivity extends Activity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                taskSelected(i);
 
             }
         });
@@ -169,5 +172,34 @@ public class MainActivity extends Activity {
                 mAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    private void taskSelected(final int position) {
+        // 1
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+
+        // 2
+        alertDialogBuilder.setTitle(R.string.alert_title);
+
+        // 3
+        alertDialogBuilder
+                .setMessage(mList.get(position))
+                .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        mList.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // 4
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // 5
+        alertDialog.show();
     }
 }
